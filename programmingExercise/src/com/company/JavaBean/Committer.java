@@ -1,23 +1,23 @@
-package com.company.JavaBean;
+package com.company.javabean;
 
 /**
  * Created by mandyxue on 2017/3/2.
  */
 public class Committer {
 
+    // constructor
     public Committer() {
         name = "";
-        numberOfRevisions = 0;
+        numberOfRevisions = 1;
     }
 
     // parameters
     private String name;
-    private int numberOfRevisions;
+    private Integer numberOfRevisions;
 
     // methods
-    public int addRevision() {
-        numberOfRevisions++;
-        return numberOfRevisions;
+    public void addRevision() {
+        ++this.numberOfRevisions;
     }
 
     // setter and getter
@@ -30,11 +30,11 @@ public class Committer {
         this.name = name;
     }
 
-    public int getNumberOfRevisions() {
+    public Integer getNumberOfRevisions() {
         return numberOfRevisions;
     }
 
-    public void setNumberOfRevisions(int numberOfRevisions) {
+    public void setNumberOfRevisions(Integer numberOfRevisions) {
         this.numberOfRevisions = numberOfRevisions;
     }
 }

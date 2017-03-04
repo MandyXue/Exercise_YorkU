@@ -2,8 +2,6 @@ package com.company.test;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by mandyxue on 2017/3/2.
  */
