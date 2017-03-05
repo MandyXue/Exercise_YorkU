@@ -11,6 +11,12 @@ import java.util.Locale;
 public class Report {
 
     // constructor
+    public Report(){
+        createdTime = null;
+        resolvedTime = null;
+        resolutionTime = -1;
+    }
+
     public Report(String createdTimeStr, String resolvedTimeStr) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
         sdf.setLenient(false);

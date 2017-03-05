@@ -22,5 +22,8 @@ public class ReportTest {
 
         Report testReport4 = new Report(null, "");
         Assert.assertEquals(testReport4.getResolutionTime(), -1);
+
+        Report testReport5 = new Report("Thu, 10 Sep 2015 13:01:46 +0000", "Mon, 20 Jun 2016 19:30:17 +0000");
+        System.out.println(testReport5.getResolutionTime());
     }
 }
