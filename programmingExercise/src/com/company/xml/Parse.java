@@ -11,13 +11,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 /**
  * Created by mandyxue on 2017/3/4.
  */
-public class CommitterParse {
+public class Parse {
     public static void main(String[] args) {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -35,6 +37,7 @@ public class CommitterParse {
             ArrayList<Committer> committers = handler1.getCommitters();
             findLargestCommitter(committers);
 
+
             // report
             ArrayList<Report> reports = new ArrayList<>();
             MyDefaultHandler handler2 = new MyDefaultHandler();
@@ -47,6 +50,9 @@ public class CommitterParse {
             System.out.println("--------------------------------------------");
             System.out.println("Reading files...");
             for (int i = 0; i < fileList.length; i++) {
+                if (!fileList[i].endsWith(".xml")) {
+                    continue;
+                }
                 File jiraFile = new File(jiraDirectory + "/" + fileList[i]);
 
                 InputStream stream1 = new FileInputStream(jiraFile);
@@ -54,11 +60,14 @@ public class CommitterParse {
 
                 Report newReport = handler2.getReport();
                 reports.add(newReport);
-//                System.out.println(newReport.getResolutionTime());
-//                System.out.println(jiraDirectory + "/" + fileList[i]);
             }
 
             findLargestResolutionTime(reports);
+
+            // revisions
+            HashMap<Integer,Integer> revisions = handler1.getRevisions();
+            System.out.println("--------------------------------------------");
+            reportNumberOfRevisions(revisions);
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         } catch (SAXException e) {
@@ -94,5 +103,27 @@ public class CommitterParse {
 //            System.out.println(temp.getResolutionTime());
         }
         System.out.println("The maximum resolution time is: " + largest/(365*24*60*60) + " years " + largest%(365*24*60*60)/24/3600 + " days " + (largest%(24*60*60))/3600 + " hours " + (largest%3600)/60 + " minutes " + largest%60 + " seconds.");
+    }
+
+    public static void reportNumberOfRevisions(HashMap<Integer,Integer> revisions) {
+        Iterator it = revisions.values().iterator();
+        Integer max = 0;
+        Integer min = 1;
+        Double sum = 0.0;
+        while (it.hasNext()) {
+            Integer temp = (Integer) it.next();
+            if (temp > max) {
+                max = temp;
+            }
+            if (temp < min) {
+                min = temp;
+            }
+            sum = sum + temp;
+        }
+        DecimalFormat df = new DecimalFormat("#.####");
+        float f = Float.valueOf(df.format(sum/17326));
+        System.out.println("The minimum number of code revisions is: " + min + " times.");
+        System.out.println("The average number of code revisions is: " + f + " times.");
+        System.out.println("The maximum number of code revisions is: " + max + " times.");
     }
 }

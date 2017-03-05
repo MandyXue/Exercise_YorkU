@@ -8,6 +8,9 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by mandyxue on 2017/3/4.
@@ -26,10 +29,21 @@ public class MyDefaultHandler extends DefaultHandler {
     private String reportCreatedTime;
     private String reportResolvedTime;
 
+    // list of revisions per reports
+    private HashMap<Integer,Integer> revisions;
+
     // tag name after searching
     private String tagName;
 
     // getters and setters
+
+    public HashMap<Integer, Integer> getRevisions() {
+        return revisions;
+    }
+
+    public void setRevisions(HashMap<Integer, Integer> revisions) {
+        this.revisions = revisions;
+    }
 
     public String getFileType() {
         return fileType;
@@ -68,6 +82,10 @@ public class MyDefaultHandler extends DefaultHandler {
     public void startDocument() throws SAXException {
         if (fileType.equals("committer")) {
             this.committers = new ArrayList<>();
+            this.revisions = new HashMap<>();
+            for (int i = 1; i <= 17326; i++) {
+                this.revisions.put(i,0);
+            }
         } else if (fileType.equals("report")){
             this.report = new Report();
         } else {
@@ -148,6 +166,23 @@ public class MyDefaultHandler extends DefaultHandler {
                 String content = new String(ch,start,length);
                 if (this.tagName.equals("author")) {
                     this.committer.setName(content);
+                } else if (this.tagName.equals("msg")) {
+                    String regEx = "^HBASE-\\d+";
+                    // 编译正则表达式
+                    Pattern pattern = Pattern.compile(regEx);
+                    // 忽略大小写的写法
+                    // Pattern pat = Pattern.compile(regEx, Pattern.CASE_INSENSITIVE);
+                    Matcher matcher = pattern.matcher(content);
+                    // 查找字符串中是否有匹配正则表达式的字符/字符串
+//                    System.out.println(content);
+                    if (matcher.find()) {
+                        Integer reportNum = Integer.parseInt(matcher.group().replace("HBASE-",""));
+//                        System.out.println(reportNum);
+                        if (this.revisions.containsKey(reportNum)) {
+                            Integer oldCount = revisions.get(reportNum);
+                            revisions.put(reportNum,oldCount+1);
+                        }
+                    }
                 }
             }
         } else {
